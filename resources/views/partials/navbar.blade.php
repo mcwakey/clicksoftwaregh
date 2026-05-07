@@ -1,4 +1,14 @@
-@php($company = \App\Support\SiteData::company())
+@php
+    $company = \App\Support\SiteData::company();
+    $links = [
+        ['home', 'Home'],
+        ['about', 'About'],
+        ['services', 'Services'],
+        ['projects.index', 'Projects'],
+        ['blog.index', 'Blog'],
+        ['contact', 'Contact'],
+    ];
+@endphp
 <header id="site-navbar" class="sticky top-0 z-40 backdrop-blur bg-white/80 transition-all duration-300 border-b border-slate-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -8,16 +18,6 @@
             </a>
 
             <nav class="hidden lg:flex items-center gap-1 text-sm font-medium">
-                @php
-                    $links = [
-                        ['home', 'Home'],
-                        ['about', 'About'],
-                        ['services', 'Services'],
-                        ['projects.index', 'Projects'],
-                        ['blog.index', 'Blog'],
-                        ['contact', 'Contact'],
-                    ];
-                @endphp
                 @foreach ($links as [$route, $label])
                     @php($active = request()->routeIs($route) || ($route === 'projects.index' && request()->routeIs('projects.*')) || ($route === 'blog.index' && request()->routeIs('blog.*')))
                     <a href="{{ route($route) }}"
