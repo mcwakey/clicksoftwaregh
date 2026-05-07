@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\SiteData;
+use App\Models\ContactMessage;
+use App\Models\Service;
+use App\Support\ContentTransformer;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
     public function show()
     {
+        $services = Service::where('status', 'published')->orderBy('sort_order')->get()
+            ->map(fn($s) => ContentTransformer::service($s))->all();
         return view('pages.contact', [
-            'meta_title' => 'Contact Us | Click Software GH',
-            'meta_description' => 'Get in touch with Click Software GH for websites, mobile apps and business systems.',
-            'services' => SiteData::services(),
+            'meta_title' => __('messages.contact_us') . ' | Click Software GH',
+            'meta_description' => 'Get in touch with Click Software GH.',
+            'services' => $services,
         ]);
     }
 
@@ -27,11 +31,10 @@ class ContactController extends Controller
             'message'      => ['required', 'string', 'max:5000'],
         ]);
 
-        // TODO: Send email / store enquiry. For now we just acknowledge.
-        // Mail::to(config('mail.to.address'))->send(new ContactEnquiry($data));
+        ContactMessage::create($data + ['status' => 'unread']);
 
         return back()
-            ->with('success', 'Thank you for reaching out, ' . $data['full_name'] . '. Our team will get back to you shortly.')
+            ->with('success', __('messages.contact_thanks', ['name' => $data['full_name']]))
             ->withInput([]);
     }
 }

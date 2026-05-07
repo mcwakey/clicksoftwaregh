@@ -1,12 +1,12 @@
 @php
     $company = \App\Support\SiteData::company();
     $links = [
-        ['home', 'Home'],
-        ['about', 'About'],
-        ['services', 'Services'],
-        ['projects.index', 'Projects'],
-        ['blog.index', 'Blog'],
-        ['contact', 'Contact'],
+        ['home', __('messages.home')],
+        ['about', __('messages.about')],
+        ['services', __('messages.services')],
+        ['projects.index', __('messages.projects')],
+        ['blog.index', __('messages.blog')],
+        ['contact', __('messages.contact')],
     ];
 @endphp
 <header id="site-navbar" class="sticky top-0 z-40 backdrop-blur bg-white/80 transition-all duration-300 border-b border-slate-100">
@@ -28,9 +28,13 @@
             </nav>
 
             <div class="hidden lg:flex items-center gap-3">
+                <div class="flex items-center gap-1 text-xs font-semibold border border-slate-200 rounded-lg overflow-hidden">
+                    <a href="{{ route('locale.switch', 'en') }}" class="px-2.5 py-1.5 {{ app()->getLocale() === 'en' ? 'bg-navy text-white' : 'text-slate-600 hover:bg-slate-100' }}">EN</a>
+                    <a href="{{ route('locale.switch', 'fr') }}" class="px-2.5 py-1.5 {{ app()->getLocale() === 'fr' ? 'bg-navy text-white' : 'text-slate-600 hover:bg-slate-100' }}">FR</a>
+                </div>
                 <a href="{{ route('quote') }}"
                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-brand to-accent-dark text-white text-sm font-semibold shadow-soft hover:opacity-90 transition">
-                    <i class="fa-solid fa-paper-plane text-xs"></i> Request a Quote
+                    <i class="fa-solid fa-paper-plane text-xs"></i> {{ __('messages.request_quote') }}
                 </a>
             </div>
 
@@ -50,8 +54,12 @@
                     {{ $label }}
                 </a>
             @endforeach
+            <div class="flex items-center gap-1 text-xs font-semibold border border-slate-200 rounded-lg overflow-hidden mt-3 w-fit">
+                <a href="{{ route('locale.switch', 'en') }}" class="px-2.5 py-1.5 {{ app()->getLocale() === 'en' ? 'bg-navy text-white' : 'text-slate-600' }}">EN</a>
+                <a href="{{ route('locale.switch', 'fr') }}" class="px-2.5 py-1.5 {{ app()->getLocale() === 'fr' ? 'bg-navy text-white' : 'text-slate-600' }}">FR</a>
+            </div>
             <a href="{{ route('quote') }}" class="block mt-2 text-center px-4 py-2.5 rounded-lg bg-gradient-to-r from-brand to-accent-dark text-white font-semibold">
-                Request a Quote
+                {{ __('messages.request_quote') }}
             </a>
         </div>
     </div>

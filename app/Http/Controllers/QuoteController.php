@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\SiteData;
+use App\Models\QuoteRequest;
+use App\Models\Service;
+use App\Support\ContentTransformer;
 use Illuminate\Http\Request;
 
 class QuoteController extends Controller
 {
     public function show()
     {
+        $services = Service::where('status', 'published')->orderBy('sort_order')->get()
+            ->map(fn($s) => ContentTransformer::service($s))->all();
         return view('pages.quote', [
-            'meta_title' => 'Request a Quote | Click Software GH',
-            'meta_description' => 'Tell us about your project and get a tailored quote from Click Software GH.',
-            'services' => SiteData::services(),
+            'meta_title' => __('messages.request_quote') . ' | Click Software GH',
+            'meta_description' => 'Request a quote from Click Software GH.',
+            'services' => $services,
         ]);
     }
 
@@ -27,13 +31,17 @@ class QuoteController extends Controller
             'budget_range'        => ['required', 'string', 'max:80'],
             'deadline'            => ['nullable', 'date'],
             'project_description' => ['required', 'string', 'max:5000'],
+            'attachment'          => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120'],
         ]);
 
-        // TODO: Send email / store quote request. For now we just acknowledge.
-        // Mail::to(config('mail.to.address'))->send(new QuoteRequest($data));
+        if ($request->hasFile('attachment')) {
+            $data['attachment'] = $request->file('attachment')->store('quotes', 'public');
+        }
+
+        QuoteRequest::create($data + ['status' => 'new']);
 
         return back()
-            ->with('success', 'Thank you, ' . $data['full_name'] . '. We have received your request and will respond within one business day.')
+            ->with('success', __('messages.quote_thanks', ['name' => $data['full_name']]))
             ->withInput([]);
     }
 }
